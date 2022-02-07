@@ -197,7 +197,7 @@ class EA:
 # SAVING adversarial images of each run  **********************************          
             img = Image.fromarray(images[0].astype(np.uint8))
             # filename = "%s-%s-%s_advers.npy" % ( self.ancestorx, self.targetx, count)
-            filename2 = "%s_to_%s_advers.png" % ( self.ancestorx, self.targetx)
+            filename2 = "%s_Adversarial.png" % ( self.ancestorx, self.targetx)
             img.save(filename2, 'png')
             # np.save(filename, images[0])
             all_bests.append(bests)

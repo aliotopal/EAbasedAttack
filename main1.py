@@ -14,7 +14,7 @@ model = DenseNet121(weights='imagenet')
 numberOfElites = 10
 pop_size = 40
 run = 1
-# Termination criterias of the EA
+# Termination criteria of the EA
 generation = 10000
 accuracy = 0.75  # Threshold accuracy of the adversarial image target label value
 

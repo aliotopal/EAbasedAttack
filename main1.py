@@ -15,7 +15,7 @@ numberOfElites = 10
 pop_size = 40
 # Termination criteria of the EA
 generation = 10000
-accuracy = 0.00000075  # Threshold accuracy of the adversarial image target label value
+accuracy = 0.75  # Threshold accuracy of the adversarial image target label value
 
 # Select the original image and a target category with its index number from:
 # https://github.com/aliotopal/EA-based_AdversarialAttack/blob/main/ImageNet_labels_inx.txt

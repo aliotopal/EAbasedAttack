@@ -1,6 +1,0 @@
-Number of generations: 3
-It took: 9.67 secs.
----------------------------------------------------
-Before the image is: 0.98735553 llama
-Now the image is: 6.0241075e-07 bannister
----------------------------------------------------

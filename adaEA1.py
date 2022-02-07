@@ -114,7 +114,7 @@ class EA:
             crossedover_group[parent_index_2, start_x: start_x + size_x, start_y: start_y + size_y, z] = temp
         return crossedover_group
 
-    def search(self, x, generation, run, title, accuracy, ancestorx):
+    def search(self, x, generation, title, accuracy, ancestorx):
         pop_size = x
         self.generation = generation
         duration = []
@@ -124,110 +124,110 @@ class EA:
         all_best_prob = []
         boundary_min = 0
         boundary_max = 255
-        for j in range(run):
-            anc = self.ancestor
-            images = np.array([anc] * pop_size).astype(int)  # 160 same dogs' images are created
-            count = 0
-            bests = []
-            isbest = []
-            accur = 0.0
-            begin = time.time()
-            goON = True
-            while accur < accuracy:
-            #while count < generation:
-                if count == generation:
-                     filename3 = "Failed/%s-%s.npy" % ( self.ancestorx, self.targetx)
-                     np.save(filename3, images[0])
-                     img = Image.fromarray(images[0].astype(np.uint8))
-                     filename2 = "Failed/%s-%s.png" % ( self.ancestorx, self.targetx)
-                     img.save(filename2, 'png')
-                     
-                     filename4 = "Failed/%s-%s.txt" % (self.ancestorx, self.targetx)
-                     file2 = open(filename4, 'w')
-                     file2.write("iterations:  " + str(count) + "\n")
-                     file2.write("best_prob:  " + str(best_prob) + "\n")
-                     endtime = time.time()
-                     file2.write("time:  " + str(endtime-begin) + "\n")
-                     file2.close()
-                     break
-                 
-                img = preprocess_input(images)     
-                preds = self.model.predict(img)  # we can find the predictions here
-                probs = self.get_class_prob(preds, self.target)
-                best_prob = max(probs)
-                indx_best_prob = list(probs).index(best_prob)
-                best_preds = preds[indx_best_prob]
-                accur = best_prob
-                bestImg = images[indx_best_prob]
-                
-                bestIm = bestImg.reshape(1,224,224,3)
-                predT = self.model.predict(preprocess_input(bestIm))
-                percentage_middle_class = 1  # 50% will be mutated
-                percentage_random_keep = 1
-                percentage_keep = 1
 
-                fitness = self.get_fitness(probs)
+        anc = self.ancestor
+        images = np.array([anc] * pop_size).astype(int)  # 160 same dogs' images are created
+        count = 0
+        bests = []
+        isbest = []
+        accur = 0.0
+        begin = time.time()
+        goON = True
+        while accur < accuracy:
+        #while count < generation:
+            if count == generation:
+                 filename3 = "Failed/%s-%s.npy" % ( self.ancestorx, self.targetx)
+                 np.save(filename3, images[0])
+                 img = Image.fromarray(images[0].astype(np.uint8))
+                 filename2 = "Failed/%s-%s.png" % ( self.ancestorx, self.targetx)
+                 img.save(filename2, 'png')
 
-                # select population classes based on fitness and create 'keep' group
-                elite, middle_class, elite_fitness, idx_elite, random_keep = self.selectionImgNet(images, fitness)
-                elite2 = elite.copy()
-                keep = np.concatenate((elite2, random_keep))
+                 filename4 = "Failed/%s-%s.txt" % (self.ancestorx, self.targetx)
+                 file2 = open(filename4, 'w')
+                 file2.write("iterations:  " + str(count) + "\n")
+                 file2.write("best_prob:  " + str(best_prob) + "\n")
+                 endtime = time.time()
+                 file2.write("time:  " + str(endtime-begin) + "\n")
+                 file2.close()
+                 break
 
-                # ---STEP 3: Reproduce 80 individuals by mutating Elits and Middle class---------
+            img = preprocess_input(images)
+            preds = self.model.predict(img)  # we can find the predictions here
+            probs = self.get_class_prob(preds, self.target)
+            best_prob = max(probs)
+            indx_best_prob = list(probs).index(best_prob)
+            best_preds = preds[indx_best_prob]
+            accur = best_prob
+            bestImg = images[indx_best_prob]
 
-                # mutate and crossover individuals
-                # only mutate middle class with p=0.5, so only half
-                im_size = self.ancestor.shape[0] * self.ancestor.shape[1] * self.ancestor.shape[2]
-                no_of_pixels = self.get_no_of_pixels(im_size)
-                mutated_middle_class = self.mutationImgNet(no_of_pixels, middle_class, percentage_middle_class, boundary_min,
-                                                boundary_max)
-                mutated_keep_group1 = self.mutationImgNet(no_of_pixels, keep, percentage_keep, boundary_min, boundary_max)
-                mutated_keep_group2 = self.mutationImgNet(no_of_pixels, mutated_keep_group1, percentage_keep, boundary_min,
-                                               boundary_max)
+            bestIm = bestImg.reshape(1,224,224,3)
+            predT = self.model.predict(preprocess_input(bestIm))
+            percentage_middle_class = 1  # 50% will be mutated
+            percentage_random_keep = 1
+            percentage_keep = 1
 
-                all_ = np.concatenate((mutated_middle_class, mutated_keep_group2))
-                parents_idx = self.get_crossover_parents(all_)
-                crossover_group = self.crossoverImgNet(all_, parents_idx, im_size)
+            fitness = self.get_fitness(probs)
 
-                # create new population
-                images = np.concatenate((elite, crossover_group))
+            # select population classes based on fitness and create 'keep' group
+            elite, middle_class, elite_fitness, idx_elite, random_keep = self.selectionImgNet(images, fitness)
+            elite2 = elite.copy()
+            keep = np.concatenate((elite2, random_keep))
 
-                print('population:', len(probs), ' run:', j + 1, ' generation:', count, ' best:', max(probs))
-                bests.append(math.log(best_prob))
-                count += 1
+            # ---STEP 3: Reproduce 80 individuals by mutating Elits and Middle class---------
+
+            # mutate and crossover individuals
+            # only mutate middle class with p=0.5, so only half
+            im_size = self.ancestor.shape[0] * self.ancestor.shape[1] * self.ancestor.shape[2]
+            no_of_pixels = self.get_no_of_pixels(im_size)
+            mutated_middle_class = self.mutationImgNet(no_of_pixels, middle_class, percentage_middle_class, boundary_min,
+                                            boundary_max)
+            mutated_keep_group1 = self.mutationImgNet(no_of_pixels, keep, percentage_keep, boundary_min, boundary_max)
+            mutated_keep_group2 = self.mutationImgNet(no_of_pixels, mutated_keep_group1, percentage_keep, boundary_min,
+                                           boundary_max)
+
+            all_ = np.concatenate((mutated_middle_class, mutated_keep_group2))
+            parents_idx = self.get_crossover_parents(all_)
+            crossover_group = self.crossoverImgNet(all_, parents_idx, im_size)
+
+            # create new population
+            images = np.concatenate((elite, crossover_group))
+
+            print('population:', len(probs), ' generation:', count, ' best:', max(probs))
+            bests.append(math.log(best_prob))
+            count += 1
                 
 # SAVING adversarial images of each run  **********************************          
-            img = Image.fromarray(images[0].astype(np.uint8))
-            # filename = "%s-%s-%s_advers.npy" % ( self.ancestorx, self.targetx, count)
-            filename2 = "%s_Adversarial.png" % ( self.ancestorx, self.targetx)
-            img.save(filename2, 'png')
-            # np.save(filename, images[0])
-            all_bests.append(bests)
-            all_best_prob.append(best_prob)
-            predictions.append(best_preds)
-            end = time.time()
-            duration.append((end - begin))  # add all run's times
-            counts.append(count)
-            
-            filename3 = "%s_to_%s_report.txt" % (self.ancestorx, self.targetx)
-            file2 = open(filename3, 'w')
-            count = np.array(count)
-            duration = np.array(duration)
-            all_best_prob = np.array(all_best_prob)
-            file2.write('Number of generations: ' + str(count) + "\n")
-            file2.write("It took: %.2f secs.\n" %(duration[0]))
-            file2.write("---------------------------------------------------\n")
-            img = anc.reshape(1, 224, 224, 3)
-            img = preprocess_input(img)
-            pred = self.model.predict(img)  # we can find the predictions here
-            print(pred)
-            label = decode_predictions(pred)
-            print("After: ", label)
-            label1 = label[0][0]
-            file2.write("Before the image was: " + str(label1[2]) + " " + str(label1[1]) +"\n")
-            file2.write("Now the image is: "  +  str(all_best_prob[0]) + " " + self.targetx + "\n")
-            file2.write("---------------------------------------------------\n")
-            file2.close()
+        img = Image.fromarray(images[0].astype(np.uint8))
+        # filename = "%s-%s-%s_advers.npy" % ( self.ancestorx, self.targetx, count)
+        filename2 = "%s_Adversarial.png" % ( self.ancestorx)
+        img.save(filename2, 'png')
+        # np.save(filename, images[0])
+        all_bests.append(bests)
+        all_best_prob.append(best_prob)
+        predictions.append(best_preds)
+        end = time.time()
+        duration.append((end - begin))  # add all run's times
+        counts.append(count)
+
+        filename3 = "%s_to_%s_report.txt" % (self.ancestorx, self.targetx)
+        file2 = open(filename3, 'w')
+        count = np.array(count)
+        duration = np.array(duration)
+        all_best_prob = np.array(all_best_prob)
+        file2.write('Number of generations: ' + str(count) + "\n")
+        file2.write("It took: %.2f secs.\n" %(duration[0]))
+        file2.write("---------------------------------------------------\n")
+        img = anc.reshape(1, 224, 224, 3)
+        img = preprocess_input(img)
+        pred = self.model.predict(img)  # we can find the predictions here
+        print(pred)
+        label = decode_predictions(pred)
+        print("After: ", label)
+        label1 = label[0][0]
+        file2.write("Before the image was: " + str(label1[2]) + " " + str(label1[1]) +"\n")
+        file2.write("Now the image is: "  +  str(all_best_prob[0]) + " " + self.targetx + "\n")
+        file2.write("---------------------------------------------------\n")
+        file2.close()
 
 # *************************************************************************
         return all_best_prob, all_bests, counts, duration, images, title, predictions  # if accuracy fix return counts not count

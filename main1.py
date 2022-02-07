@@ -15,7 +15,7 @@ numberOfElites = 10
 pop_size = 40
 # Termination criteria of the EA
 generation = 10000
-accuracy = 0.75  # Threshold accuracy of the adversarial image target label value
+accuracy = 0.00000075  # Threshold accuracy of the adversarial image target label value
 
 # Select the original image and a target category with its index number from:
 # https://github.com/aliotopal/EA-based_AdversarialAttack/blob/main/ImageNet_labels_inx.txt
@@ -29,7 +29,7 @@ image = load_img(f"{original_image}", target_size=(224, 224))#, interpolation='l
 ancestor = img_to_array(image)
 anc = original_image.split('.')[0]
 new_EA = EA(ancestor, target_index_no, model, pop_size, generation, numberOfElites, target_category, anc)
-new_EA.search(pop_size, generation, run, "adaptedEA", accuracy, anc)
+new_EA.search(pop_size, generation,"adaptedEA", accuracy, anc)
 
 
 # The Adversarial image and a detailed report will be saved.

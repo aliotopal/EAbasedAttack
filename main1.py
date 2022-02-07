@@ -1,3 +1,8 @@
+# To attack a different model:
+# a. import the CNN in main1.py
+# b. in adaEA1.py file update the following XXXs:
+# from tensorflow.keras.applications.XXX import preprocess_input
+# from tensorflow.python.keras.applications.XXX import decode_predictions
 
 from tensorflow.keras.applications.densenet import DenseNet121
 from tensorflow.keras.preprocessing.image import img_to_array

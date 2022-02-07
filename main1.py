@@ -4,24 +4,26 @@
 # from tensorflow.keras.applications.XXX import preprocess_input
 # from tensorflow.python.keras.applications.XXX import decode_predictions
 
-from tensorflow.keras.applications.densenet import DenseNet121
+from tensorflow.keras.applications.densenet import DenseNet121  # Import the target CNN
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.preprocessing.image import load_img
 from adaEA1 import *
 model = DenseNet121(weights='imagenet')
 
-# Settings...
+# Settings for the EA...
 numberOfElites = 10
 pop_size = 40
 run = 1
+# Termination criterias of the EA
 generation = 10000
-accuracy = 0.75
+accuracy = 0.75  # Threshold accuracy of the adversarial image target label value
 
 # Select the original image and a target category with its index number from:
 # https://github.com/aliotopal/EA-based_AdversarialAttack/blob/main/ImageNet_labels_inx.txt
 original_image = 'llama2.JPEG'
 target_category = 'bannister'
 target_index_no = 421
+
 
 # Do not touch this part: SEARCH starts here...
 image = load_img(f"{original_image}", target_size=(224, 224))#, interpolation='lanczos'

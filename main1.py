@@ -10,7 +10,7 @@ numberOfElites = 10
 pop_size = 40
 run = 1
 generation = 10000
-accuracy = 6.0082066e-07
+accuracy = 0.75
 
 # Select the original image and a target category with its index number from:
 # https://github.com/aliotopal/EA-based_AdversarialAttack/blob/main/ImageNet_labels_inx.txt

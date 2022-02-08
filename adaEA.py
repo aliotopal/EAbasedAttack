@@ -129,10 +129,8 @@ class EA:
         images = np.array([anc] * pop_size).astype(int)  # 160 same dogs' images are created
         count = 0
         bests = []
-        isbest = []
         accur = 0.0
         begin = time.time()
-        goON = True
         while accur < accuracy:
         #while count < generation:
             if count == generation:

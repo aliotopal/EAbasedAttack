@@ -7,7 +7,7 @@
 from tensorflow.keras.applications.densenet import DenseNet121  # Import the target CNN
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.preprocessing.image import load_img
-from adaEA1 import *
+from adaEA import *
 model = DenseNet121(weights='imagenet')
 
 # Settings for the EA...

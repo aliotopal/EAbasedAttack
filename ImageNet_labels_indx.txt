@@ -998,3 +998,4 @@
  997: 'bolete',
  998: 'ear, spike, capitulum',
  999: 'toilet tissue, toilet paper, bathroom tissue'}
+REF: Fox, E., & Guestrin, C. (n.d.). Coursera Machine Learning Specialization

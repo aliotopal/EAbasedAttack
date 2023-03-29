@@ -212,7 +212,6 @@ class EA:
         img = anc.reshape(1, 224, 224, 3)
         img = preprocess_input(img)
         pred = self.model.predict(img)  # we can find the predictions here
-        print(pred)
         label = decode_predictions(pred)
         label1 = label[0][0]
         print("Before the image was: " + str(label1[2]) + " " + str(label1[1]))

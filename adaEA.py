@@ -131,9 +131,9 @@ class EA:
         bests = []
         accur = 0.0
         begin = time.time()
-        while accur < accuracy:
-        #while count < generation:
+        while accur <= accuracy:
             if count == generation:
+                # if algorithm can not create the adversarial image within "generation" stop the algorithm and report the results.
                  filename3 = "Failed/%s-%s.npy" % ( self.ancestorx, self.targetx)
                  np.save(filename3, images[0])
                  img = Image.fromarray(images[0].astype(np.uint8))

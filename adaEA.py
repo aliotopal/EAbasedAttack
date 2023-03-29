@@ -160,7 +160,7 @@ class EA:
 
             bestIm = bestImg.reshape(1,224,224,3)
             predT = self.model.predict(preprocess_input(bestIm))
-            percentage_middle_class = 1  # 50% will be mutated
+            percentage_middle_class = 1  
             percentage_random_keep = 1
             percentage_keep = 1
 
@@ -171,7 +171,7 @@ class EA:
             elite2 = elite.copy()
             keep = np.concatenate((elite2, random_keep))
 
-            # ---STEP 3: Reproduce 80 individuals by mutating Elits and Middle class---------
+            # ---STEP 3: Reproduce individuals by mutating Elits and Middle class---------
 
             # mutate and crossover individuals
             # only mutate middle class with p=0.5, so only half

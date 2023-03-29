@@ -18,7 +18,7 @@ generation = 10000
 accuracy = 0.75  # Threshold accuracy of the adversarial image target label value
 
 # Select the original image and a target category with its index number from:
-# https://github.com/aliotopal/EA-based_AdversarialAttack/blob/main/ImageNet_labels_inx.txt
+# https://github.com/aliotopal/EAbasedAttack/blob/master/ImageNet_labels_indx.txt
 original_image = 'llama2.JPEG'
 target_category = 'bannister'
 target_index_no = 421

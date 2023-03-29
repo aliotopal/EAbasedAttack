@@ -126,7 +126,7 @@ class EA:
         boundary_max = 255
 
         anc = self.ancestor
-        images = np.array([anc] * pop_size).astype(int)  # 160 same dogs' images are created
+        images = np.array([anc] * pop_size).astype(int)  # pop_size x ancestor images are created
         count = 0
         bests = []
         accur = 0.0

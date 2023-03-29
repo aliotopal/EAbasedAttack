@@ -174,7 +174,6 @@ class EA:
             # ---STEP 3: Reproduce individuals by mutating Elits and Middle class---------
 
             # mutate and crossover individuals
-            # only mutate middle class with p=0.5, so only half
             im_size = self.ancestor.shape[0] * self.ancestor.shape[1] * self.ancestor.shape[2]
             no_of_pixels = self.get_no_of_pixels(im_size)
             mutated_middle_class = self.mutationImgNet(no_of_pixels, middle_class, percentage_middle_class, boundary_min,

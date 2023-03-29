@@ -2,9 +2,8 @@
 # DO NOT TOUCH THIS FILE
 import math
 import random
-from tensorflow.keras.applications.densenet import preprocess_input
-from tensorflow.python.keras.applications.densenet import decode_predictions
-
+from tensorflow.python.keras.applications.mobilenet import decode_predictions
+from tensorflow.keras.applications.mobilenet import preprocess_input
 random.seed(0)
 import time
 from PIL import Image
@@ -24,7 +23,7 @@ class EA:
         self.ancestorx = ancestorx
 
     def gen_populations(self, x):
-        # Generate populations by using indiv.pny image as source in our case
+        # Generate populations by using indiv.npy image as source in our case
         population = []
         for i in range(self.pop_size):
             population.append(x)
@@ -72,8 +71,6 @@ class EA:
 
     def mutationImgNet(self, no_of_pixels, mutation_group, percentage, boundary_min, boundary_max):
         mutated_group = mutation_group.copy()
-        gene_length = len(mutation_group[0])
-        # select only half the group for mutation
         random.shuffle(mutated_group)
         no_of_individuals = len(mutated_group)
         for individual in range(int(no_of_individuals * percentage)):
@@ -95,7 +92,6 @@ class EA:
     # select random no of pixels to interchange
     def crossoverImgNet(self, crossover_group, parents_idx, im_size):
         crossedover_group = crossover_group.copy()
-        no_of_pixels = np.random.randint(im_size)
         for i in range(0, len(parents_idx), 2):
             parent_index_1 = parents_idx[i]
             parent_index_2 = parents_idx[i + 1]
@@ -160,8 +156,7 @@ class EA:
 
             bestIm = bestImg.reshape(1,224,224,3)
             predT = self.model.predict(preprocess_input(bestIm))
-            percentage_middle_class = 1  
-            percentage_random_keep = 1
+            percentage_middle_class = 1
             percentage_keep = 1
 
             fitness = self.get_fitness(probs)
@@ -219,8 +214,10 @@ class EA:
         pred = self.model.predict(img)  # we can find the predictions here
         print(pred)
         label = decode_predictions(pred)
-        print("After: ", label)
         label1 = label[0][0]
+        print("Before the image was: " + str(label1[2]) + " " + str(label1[1]))
+        print("Now the image is: "  +  str(all_best_prob[0]) + " " + self.targetx)
+
         file2.write("Before the image was: " + str(label1[2]) + " " + str(label1[1]) +"\n")
         file2.write("Now the image is: "  +  str(all_best_prob[0]) + " " + self.targetx + "\n")
         file2.write("---------------------------------------------------\n")

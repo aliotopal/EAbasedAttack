@@ -1,0 +1,6 @@
+Number of generations: 732
+It took: 360.07 secs.
+---------------------------------------------------
+Before the image was: 0.9941605 acorn
+Now the image is: 0.75006557 rhinoceros beetle
+---------------------------------------------------

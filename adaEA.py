@@ -152,10 +152,8 @@ class EA:
             indx_best_prob = list(probs).index(best_prob)
             best_preds = preds[indx_best_prob]
             accur = best_prob
-            bestImg = images[indx_best_prob]
 
-            bestIm = bestImg.reshape(1,224,224,3)
-            predT = self.model.predict(preprocess_input(bestIm))
+
             percentage_middle_class = 1
             percentage_keep = 1
 
@@ -184,7 +182,7 @@ class EA:
             # create new population
             images = np.concatenate((elite, crossover_group))
 
-            print('population:', len(probs), ' generation:', count, ' best:', max(probs))
+            print('generation:', count, ' best:', max(probs))
             bests.append(math.log(best_prob))
             count += 1
                 

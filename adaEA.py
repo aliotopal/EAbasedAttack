@@ -8,6 +8,8 @@ random.seed(0)
 import time
 from PIL import Image
 import numpy as np
+from tqdm import tqdm
+from sys import stdout
 np.set_printoptions(threshold=np.inf)
 
 
@@ -127,6 +129,7 @@ class EA:
         bests = []
         accur = 0.0
         begin = time.time()
+        # pbar = tqdm(total=generation)
         while accur <= accuracy:
             if count == generation:
                 # if algorithm can not create the adversarial image within "generation" stop the algorithm and report the results.
@@ -144,6 +147,7 @@ class EA:
                  file2.write("time:  " + str(endtime-begin) + "\n")
                  file2.close()
                  break
+
 
             img = preprocess_input(images)
             preds = self.model.predict(img)  # we can find the predictions here
@@ -181,11 +185,12 @@ class EA:
 
             # create new population
             images = np.concatenate((elite, crossover_group))
-
-            print('generation:', count, ' best:', max(probs))
+            stdout.write(f'\rgeneration: {count}/{generation} {self.targetx}: {max(probs)}')
+            # pbar.update(1)
             bests.append(math.log(best_prob))
             count += 1
-                
+
+        # pbar.close()
 # SAVING adversarial images of each run  **********************************          
         img = Image.fromarray(images[0].astype(np.uint8))
         # filename = "%s-%s-%s_advers.npy" % ( self.ancestorx, self.targetx, count)
@@ -212,7 +217,7 @@ class EA:
         pred = self.model.predict(img)  # we can find the predictions here
         label = decode_predictions(pred)
         label1 = label[0][0]
-        print("Before the image was: " + str(label1[2]) + " " + str(label1[1]))
+        print("\nBefore the image was: " + str(label1[2]) + " " + str(label1[1]))
         print("Now the image is: "  +  str(all_best_prob[0]) + " " + self.targetx)
 
         file2.write("Before the image was: " + str(label1[2]) + " " + str(label1[1]) +"\n")

@@ -193,22 +193,22 @@ class EA:
         return images[0]
 
 
-# Step 1: Load a clean image and convert it to numpy array .npy
+# Step 1: Load a clean image and convert it to numpy array:
 original_image = 'acorn1.JPEG'
-image = load_img(f"{original_image}", target_size=(224, 224))  # Load and resize the image into CNN's input size.
+image = load_img(f"{original_image}", target_size=(224, 224))  # Load the image and resize it into CNN's input size.
 x = img_to_array(image)
-y = 306  # if it is targeted attack, this will be taken into account.
+y = 306  # Optional! It is for targeted attack.
 
 
-# Step 2: Load the target CNN trained with ImageNet dataset:
+# Step 2: Load a target CNN trained with ImageNet dataset from keras.applications library:
 from tensorflow.keras.applications.nasnet import NASNetMobile  # Import the target CNN
 from tensorflow.python.keras.applications.nasnet import decode_predictions, preprocess_input
 kclassifier = NASNetMobile(weights='imagenet')
 
 
-# Step 3: Create the attack and generate adversarial image:
+# Step 3: Built the attack and generate adversarial image:
 attackEA = EA(kclassifier, max_iter=10000, confidence =0.75, targeted = False)   # if targeted is True, then confidence will be taken into account.
-advers = attackEA.generate(x, y)   # returns adversarial image as numpy array (.npy)
+advers = attackEA.generate(x, y)   # returns adversarial image as .npy file. y is optional.
 
 
 

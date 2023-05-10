@@ -182,16 +182,15 @@ class EA:
             stdout.write(f'\rgeneration: {count}/{self.max_iter} ______ {domCat}: {domCat_prop} ____ index: {domIndx}')
             count += 1
 
+        # Stopping the algorithm criteria:
             if count == self.max_iter:
                 # if algorithm can not create the adversarial image within "generation" stop the algorithm
                 print(f"Failed to generate adversarial image within {self.max_iter} generations")
                 break
-
             if not self.targeted and domIndx != ancIndx:
                 break
             if self.targeted and domIndx == y and domCat_prop >= self.confidence:
                 break
-
         return images[0]
 
 
@@ -209,7 +208,7 @@ kclassifier = NASNetMobile(weights='imagenet')
 
 
 # Step 3: Built the attack and generate adversarial image:
-attackEA = EA(kclassifier, max_iter=10000, confidence =0.75, targeted = False)   # if targeted is True, then confidence will be taken into account.
+attackEA = EA(kclassifier, max_iter=10000, confidence =0.75, targeted = True)   # if targeted is True, then confidence will be taken into account.
 advers = attackEA.generate(x, y)   # returns adversarial image as .npy file. y is optional.
 
 

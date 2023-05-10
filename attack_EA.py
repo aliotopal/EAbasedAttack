@@ -127,15 +127,17 @@ class EA:
         label0 = decode_predictions(preds)
         label1 = label0[0][0]  # Gets the Top1 label and values for reporting.
         ancestor = label1[1]  # label
-        print(f'Before the image is:  {ancestor} --> {label1[2]} ')
         ancIndx = np.argmax(preds)
-        print("Its index number is: ", ancIndx)
+        print(f'Before the image is:  {ancestor} --> {label1[2]} ____ index: {ancIndx}')
+        if self.targeted:
+            print('Target class index number is: ', y)
         images = np.array([x] * self.pop_size).astype(int)  # pop_size * ancestor images are created
         count = 0
         while True:
             img = preprocess_input(images)
             preds = self.klassifier.predict(img)  # predictions of 40 images
-            domIndx = np.mod(np.argmax(preds), 1000)
+            # domIndx = np.mod(np.argmax(preds), 1000)
+            domIndx = np.argmax(preds[int(np.argmax(preds) / 1000)])
             # Dominant category report ##################
             label0 = decode_predictions(preds)  # Reports predictions with label and label values
             label1 = label0[0][0]  # Gets the Top1 label and values for reporting.
@@ -177,7 +179,7 @@ class EA:
         # Create new population
             images = np.concatenate((elite, crossover_group))
 
-            stdout.write(f'\rgeneration: {count}/{self.max_iter} ______ {domCat}: {domCat_prop}')
+            stdout.write(f'\rgeneration: {count}/{self.max_iter} ______ {domCat}: {domCat_prop} ____ index: {domIndx}')
             count += 1
 
             if count == self.max_iter:
@@ -185,7 +187,7 @@ class EA:
                 print(f"Failed to generate adversarial image within {self.max_iter} generations")
                 break
 
-            if not self.targeted and domCat != ancestor:
+            if not self.targeted and domIndx != ancIndx:
                 break
             if self.targeted and domIndx == y and domCat_prop >= self.confidence:
                 break

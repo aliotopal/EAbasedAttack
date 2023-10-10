@@ -8,6 +8,6 @@ Step 1: Load the target CNN trained with the ImageNet dataset
 
 Step 2: Load a clean image and set up attack parameters.
 
-      - you can select here a targeted or untargeted attack. If targeted attack you can decide the confidence of the target label value.
+        You can select here a targeted or untargeted attack. If targeted attack you can decide the confidence of the target label value.
 
 

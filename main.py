@@ -1,3 +1,4 @@
+from attack_EA import EA
 # Import the target CNN and required libraries
 from tensorflow.python.keras.applications.vgg16 import (
     decode_predictions,
@@ -17,7 +18,7 @@ kclassifier = VGG16(weights="imagenet")
 
 # Step 3: Built the attack and generate adversarial image:
 attackEA = EA(
-    kclassifier, max_iter=10000, confidence=0.55, targeted=True
+    kclassifier, max_iter=10000, confidence=0.55, targeted=False
 )  # if targeted is True, then confidence will be taken into account.
 advers = attackEA._generate(x, y)  # returns adversarial image as .npy file. y is optional.
 np.save("advers.npy", advers)

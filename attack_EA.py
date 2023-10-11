@@ -269,7 +269,7 @@ class EA:
         return adv_img
 
 
-
+# SET UP your attack
 
 # Import the target CNN and required libraries
 from tensorflow.python.keras.applications.vgg16 import (

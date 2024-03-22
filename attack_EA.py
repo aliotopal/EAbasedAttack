@@ -114,8 +114,8 @@ class EA:
         :return: An array of mutated individuals
         """
         mutated_group = mutation_group.copy()
-        random.shuffle(mutated_group)
-        no_of_individuals = len(mutated_group)
+        # np.random.shuffle(mutated_group)
+        no_of_individuals = len(mutated_group)  # 20 individuals
         for individual in range(int(no_of_individuals * percentage)):
             locations_x = np.random.randint(x.shape[0], size=int(no_of_pixels))
             locations_y = np.random.randint(x.shape[1], size=int(no_of_pixels))
@@ -129,11 +129,77 @@ class EA:
         return mutated_group
 
     @staticmethod
+    def _mutation_new(
+            _x: np.ndarray,
+            no_of_pixels: int,
+            mutation_group: np.ndarray,
+            percentage: float,
+            boundary_min: int,
+            boundary_max: int,
+            roi:np.array
+    ) -> np.ndarray:
+        """
+        :param _x: An array with the original input to be attacked.
+        :param no_of_pixels: An integer determines the number of pixels to mutate in the original input for the current
+            generation.
+        :param mutation_group: An array with the individuals which will be mutated
+        :param percentage: A decimal number from 0 to 1 that represents the percentage of individuals in the mutation
+            group that will undergo mutation.
+        :param boundary_min: keep the pixel within [0, 255]
+        :param boundary_max: keep the pixel within [0, 255]
+        :return: An array of mutated individuals
+        """
+        mutated_group = mutation_group.copy()
+        # np.random.shuffle(mutated_group)
+        no_of_individuals = len(mutated_group)  # 20 individuals
+        for individual in range(int(no_of_individuals * percentage)):
+            no_of_regs = random.randrange(0, len(roi))
+            reg_idx = random.sample(range(1, len(roi)), no_of_regs)
+            for x in reg_idx:
+                reg = roi[x]
+                no_of_pixels = min(reg[1]-reg[0], reg[3]-reg[2])              
+                locations_x = np.random.randint(reg[0], reg[1], size=int(no_of_pixels))
+                locations_y = np.random.randint(reg[2], reg[3], size=int(no_of_pixels))
+                locations_z = np.random.randint(x.shape[2], size=int(no_of_pixels))
+                new_values: [int] = random.choices(np.array([-1, 1]), k=int(no_of_pixels))
+                mutated_group[individual, locations_x, locations_y, locations_z] = (
+                        mutated_group[individual, locations_x, locations_y, locations_z] - new_values
+                )
+        mutated_group = np.clip(mutated_group, boundary_min, boundary_max)
+        # mutated_group = mutated_group % 200
+        return mutated_group
+
+
+
+    @staticmethod
     def _get_crossover_parents(crossover_group: np.ndarray) -> list:
-        size = crossover_group.shape[0]
-        no_of_parents = random.randrange(0, size, 2)
+        size = crossover_group.shape[0]  # size = 30
+        no_of_parents = random.randrange(0, size, 2)  # gives random even number between 0 and size.
         parents_idx = random.sample(range(0, size), no_of_parents)
-        return parents_idx
+        return parents_idx  # returns parents indexs who will be used for corssover.
+
+    @staticmethod
+    def _crossover_new(_x: np.ndarray, crossover_group: np.ndarray, parents_idx: list, roi: np.ndarray) -> np.ndarray:
+        ''' Randomly select the regions which will be swaped between two individuals. '''
+        crossedover_group = crossover_group.copy() # shape: (30, 224, 224, 3)
+        for i in range(0, len(parents_idx), 2):
+            parent_index_1 = parents_idx[i]
+            parent_index_2 = parents_idx[i + 1]
+            no_of_regs = random.randrange(0, len(roi))
+            reg_idx = random.sample(range(1, len(roi)), no_of_regs)
+            for x in reg_idx:
+                reg = roi[x]
+                # reg[1] - reg[0] =  x_max - x_min
+                # reg[3] - reg[2] = y_max - y_min
+                z = np.random.randint(_x.shape[2])
+
+                temp = crossedover_group[parent_index_1, reg[0] : reg[1], reg[2] : reg[3], z]
+                
+                crossedover_group[parent_index_1, reg[0] : reg[1], reg[2] : reg[3], z] = crossedover_group[parent_index_2, reg[0] : reg[1], reg[2] : reg[3], z]
+                
+                crossedover_group[parent_index_2, reg[0] : reg[1], reg[2] : reg[3], z] = temp
+
+        return crossedover_group
 
     @staticmethod
     def _crossover(_x: np.ndarray, crossover_group: np.ndarray, parents_idx: list) -> np.ndarray:
@@ -148,15 +214,15 @@ class EA:
             start_y = np.random.randint(0, _x.shape[1] - size_y)
             z = np.random.randint(_x.shape[2])
             temp = crossedover_group[
-                parent_index_1,
-                start_x : start_x + size_x,
-                start_y : start_y + size_y,
-                z,
-            ]
+                   parent_index_1,
+                   start_x: start_x + size_x,
+                   start_y: start_y + size_y,
+                   z,
+                   ]
             crossedover_group[
-                parent_index_1, start_x : start_x + size_x, start_y : start_y + size_y, z
-            ] = crossedover_group[parent_index_2, start_x : start_x + size_x, start_y : start_y + size_y, z]
-            crossedover_group[parent_index_2, start_x : start_x + size_x, start_y : start_y + size_y, z] = temp
+            parent_index_1, start_x: start_x + size_x, start_y: start_y + size_y, z
+            ] = crossedover_group[parent_index_2, start_x: start_x + size_x, start_y: start_y + size_y, z]
+            crossedover_group[parent_index_2, start_x: start_x + size_x, start_y: start_y + size_y, z] = temp
         return crossedover_group
 
     def _generate(self, x: np.ndarray, y: Optional[int] = None) -> np.ndarray:
@@ -183,11 +249,13 @@ class EA:
         while True:
             img = preprocess_input(images)
             preds = self.klassifier.predict(img)  # predictions of 40 images
-            dom_indx = np.argmax(preds[int(np.argmax(preds) / 1000)])
+            dom_indx = np.argmax(preds[int(np.argmax(preds) / 1000)])  # best individual index
+            best_image = int(np.argmax(preds) / 1000)
             adv_img = images[int(np.argmax(preds) / 1000)]  # best adversarial image so far.
+
             # Dominant category report ##################
             label0 = decode_predictions(preds)  # Reports predictions with label and label values
-            label1 = label0[0][0]  # Gets the Top1 label and values for reporting.
+            label1 = label0[best_image][0]  # Gets the Top1 label and values for reporting.
             dom_cat = label1[1]  # label
             dom_cat_prop = label1[2]  # label probability
             ###########################################
@@ -260,9 +328,10 @@ class EA:
                 boundary_max,
             )
 
-            all_ = np.concatenate((mutated_middle_class, mutated_keep_group2))
+            all_ = np.concatenate((mutated_middle_class, mutated_keep_group2)) # shape: (30, 224, 224, 3)
             parents_idx = self._get_crossover_parents(all_)
-            crossover_group = self._crossover(x, all_, parents_idx)
+            crossover_group = self._crossover(x, all_, parents_idx) # shape: (30, 224, 224, 3)
+
             # Create new population
             images = np.concatenate((elite, crossover_group))
             count += 1

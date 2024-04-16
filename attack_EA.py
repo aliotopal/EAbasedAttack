@@ -295,7 +295,7 @@ kclassifier = VGG16(weights="imagenet")
 
 # Step 3: Built the attack and generate adversarial image:
 attackEA = EA(
-    kclassifier, max_iter=10000, confidence=0.55, targeted=False
+    kclassifier, max_iter=10000, confidence=0.40, targeted=True
 )  # if targeted is True, then confidence will be taken into account.
 advers = attackEA._generate(x, y)  # returns adversarial image as .npy file. y is optional.
 np.save("advers.npy", advers)

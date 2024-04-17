@@ -289,7 +289,7 @@ from tensorflow.python.keras.applications.vgg16 import (
 )
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from PIL import Image
-epsilon = 8
+epsilon = 8   # maximum allowed pixel change [-epsilon, epsilon]
 # Step 1: Load a clean image and convert it to numpy array:
 image = load_img("acorn1.JPEG", target_size=(224, 224), interpolation="lanczos")
 x = img_to_array(image)

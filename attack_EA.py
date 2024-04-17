@@ -124,6 +124,11 @@ class EA:
             mutated_group[individual, locations_x, locations_y, locations_z] = (
                 mutated_group[individual, locations_x, locations_y, locations_z] - new_values
             )
+            # Epsilon restrictions ####################
+            noise = mutated_group[individual] - _x
+            noise = np.clip(noise, -epsilon, epsilon)
+            mutated_group[individual] = _x + noise
+            ###########################################
         mutated_group = np.clip(mutated_group, boundary_min, boundary_max)
         # mutated_group = mutated_group % 200
         return mutated_group
@@ -284,7 +289,7 @@ from tensorflow.python.keras.applications.vgg16 import (
 )
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from PIL import Image
-
+epsilon = 8
 # Step 1: Load a clean image and convert it to numpy array:
 image = load_img("acorn1.JPEG", target_size=(224, 224), interpolation="lanczos")
 x = img_to_array(image)
